@@ -3,7 +3,7 @@ require 'csv'
 
 module RailsAdmin
   class CSVConverter
-    UTF8_ENCODINGS = [nil, '', 'utf8', 'utf-8', 'unicode', 'UTF8', 'UTF-8', 'UNICODE', 'utf8mb4']
+    UTF8_ENCODINGS = [nil, '', 'utf8', 'utf-8', 'unicode', 'UTF8', 'UTF-8', 'UNICODE', 'utf8mb4', 'latin1']
     TARGET_ENCODINGS = %w(UTF-8 UTF-16LE UTF-16BE UTF-32LE UTF-32BE UTF-7 ISO-8859-1 ISO-8859-15 IBM850 MacRoman Windows-1252 ISO-8859-3 IBM852 ISO-8859-2 Windows-1250 IBM855 ISO-8859-5 KOI8-R MacCyrillic Windows-1251 IBM866 GB2312 GBK GB18030 Big5 Big5-HKSCS EUC-TW EUC-JP ISO-2022-JP Shift_JIS EUC-KR)
     def initialize(objects = [], schema = {})
       return self if (@objects = objects).blank?
@@ -35,7 +35,7 @@ module RailsAdmin
 
     def to_csv(options = {})
       # encoding shenanigans first
-      @encoding_from = Encoding.find(UTF8_ENCODINGS.include?(@abstract_model.encoding) ? 'UTF-8' : @abstract_model.encoding)
+      @encoding_from = Encoding.find(UTF8_ENCODINGS.include?(@abstract_model.try(:encoding)) ? 'UTF-8' : @abstract_model.try(:encoding))
       @encoding_to = Encoding.find(options[:encoding_to].presence || @encoding_from)
 
       csv_string = generate_csv_string(options)
